@@ -191,13 +191,23 @@ artifacts/runs/
 - 推荐验证步骤与不确定性；
 - 总耗时、节点耗时、工具调用和 token 使用量。
 
-## Demo 截图
+## Demo
 
-运行 `issue-rca demo` 后，将终端截图放到 `docs/images/demo.png`，再取消下面这一行的注释：
+下面的截图展示了 IssueRCA-Agent 的 CLI 运行效果。系统读取 GitHub Issue 后，由 Lead Agent 生成调查计划，并行调度代码检索、历史 Issue、Git 提交和项目文档四个 Sub-Agent，最后汇总根因、可疑代码位置和验证建议。
 
-```markdown
-<!-- ![IssueRCA-Agent Demo](docs/images/demo.png) -->
-```
+![IssueRCA-Agent Demo](docs/images/demo.png)
+
+Demo 覆盖的主要内容：
+
+- 读取 GitHub Issue 标题、正文和评论，并生成结构化调查计划；
+- Lead Agent 与四个 Sub-Agent 协同收集源码、历史 Issue、Git 变更和文档证据；
+- 输出根因判断、置信度以及排序后的可疑文件和符号；
+- 在报告中保留支持证据、反向证据、已排除假设和建议验证步骤；
+- 每次运行生成 Markdown 报告、JSON 结构化结果和 Trace 调试记录。
+
+项目已使用 FastAPI Issue #2004 完成一次真实端到端分析。示例报告保留了当次分析的根因判断、代码定位、证据和运行指标：
+
+[查看 FastAPI Issue #2004 分析报告](docs/samples/fastapi-2004-report.md)
 
 ## 安全设计
 
