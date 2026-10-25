@@ -1,0 +1,77 @@
+{
+  "issue": {
+    "url": "https://github.com/example/checkout-service/issues/42",
+    "owner": "example",
+    "repo": "checkout-service",
+    "number": 42,
+    "title": "Checkout returns 500 when coupon has expired",
+    "body": "Calling POST /checkout with an expired coupon raises AttributeError: 'NoneType' object has no attribute 'amount'. Expected behavior is a 400 invalid_coupon response.",
+    "state": "open",
+    "labels": ["bug", "checkout"],
+    "comments": [
+      {
+        "author": "maintainer",
+        "body": "The regression appeared after the coupon cache refactor. Requests without coupons still work.",
+        "created_at": "2026-10-20T08:00:00Z",
+        "url": "https://github.com/example/checkout-service/issues/42#issuecomment-1"
+      }
+    ],
+    "created_at": "2026-10-20T07:30:00Z",
+    "updated_at": "2026-10-20T08:00:00Z",
+    "default_branch": "main"
+  },
+  "code_search": [
+    {
+      "name": "coupon_service.py",
+      "path": "src/checkout/coupon_service.py",
+      "html_url": "https://github.com/example/checkout-service/blob/main/src/checkout/coupon_service.py"
+    },
+    {
+      "name": "routes.py",
+      "path": "src/checkout/routes.py",
+      "html_url": "https://github.com/example/checkout-service/blob/main/src/checkout/routes.py"
+    }
+  ],
+  "files": {
+    "src/checkout/coupon_service.py": "def apply_coupon(order, code):\n    coupon = coupon_cache.get(code)\n    discount = coupon.amount\n    order.total -= discount\n    return order\n",
+    "src/checkout/routes.py": "def checkout(request):\n    order = build_order(request)\n    if request.coupon:\n        order = apply_coupon(order, request.coupon)\n    return serialize(order)\n",
+    "README.md": "# Checkout Service\nExpired or unknown coupons must return HTTP 400 with error code invalid_coupon.\n"
+  },
+  "issues": [
+    {
+      "number": 17,
+      "title": "Unknown coupon causes checkout crash",
+      "body": "coupon_cache.get returns None and apply_coupon dereferences amount",
+      "state": "closed",
+      "html_url": "https://github.com/example/checkout-service/issues/17"
+    }
+  ],
+  "commits": [
+    {
+      "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "html_url": "https://github.com/example/checkout-service/commit/bbbbbbbb",
+      "commit": {"message": "refactor coupon cache lookup", "author": {"date": "2026-10-19T10:00:00Z"}}
+    },
+    {
+      "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "html_url": "https://github.com/example/checkout-service/commit/aaaaaaaa",
+      "commit": {"message": "add coupon validation", "author": {"date": "2026-10-15T10:00:00Z"}}
+    }
+  ],
+  "comparison": {
+    "status": "ahead",
+    "files": [
+      {
+        "filename": "src/checkout/coupon_service.py",
+        "status": "modified",
+        "patch": "@@ -1,6 +1,5 @@\n def apply_coupon(order, code):\n-    coupon = repository.find_active(code)\n-    if coupon is None: raise InvalidCoupon(code)\n+    coupon = coupon_cache.get(code)\n     discount = coupon.amount"
+      }
+    ]
+  },
+  "tree": [
+    {"path": "README.md", "type": "blob"},
+    {"path": "docs/error-handling.md", "type": "blob"},
+    {"path": "src/checkout/coupon_service.py", "type": "blob"},
+    {"path": "src/checkout/routes.py", "type": "blob"}
+  ]
+}
